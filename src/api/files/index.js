@@ -1,10 +1,20 @@
 import express from "express";
 import multer from "multer";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 import { extname } from "path";
 import { saveImgCover, getProducts, writeProducts } from "../products/index.js";
 
 const filesRouter = express.Router();
 
+const cloudinaryUploader = multer({
+  storage: new CloudinaryStorage({
+    cloudinary,
+    params: {
+      folder: "marketplace",
+    },
+  }),
+}).single("imageUrl");
 // Post the image
 
 filesRouter.post(
@@ -12,12 +22,12 @@ filesRouter.post(
   multer().single("imageUrl"),
   async (req, res, next) => {
     try {
-      const originalFileExtension = extname(req.file.originalname);
-      const fileName = req.params.productId + originalFileExtension;
+      //  const originalFileExtension = extname(req.file.originalname);
+      //  const fileName = req.params.productId + originalFileExtension;
 
-      await saveImgCover(fileName, req.file.buffer);
+      //  await saveImgCover(fileName, req.file.buffer);
 
-      const url = `http://localhost:3001/img/products/${fileName}`;
+      const url = req.file.path;
 
       const products = await getProducts();
       console.log("we are the PRODUCTS **********************", products);
